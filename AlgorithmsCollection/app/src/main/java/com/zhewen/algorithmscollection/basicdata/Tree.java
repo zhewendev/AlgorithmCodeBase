@@ -647,4 +647,168 @@ public class Tree {
         root.right = mergeTrees(root1.right,root2.right);
         return root;
     }
+
+    /**
+     * 二叉搜索树中搜索给定值的节点
+     * @param root
+     * @param val
+     * @return
+     */
+    public TreeNode searchBST(TreeNode root, int val){
+        if (root == null) {
+            return null;
+        } else if (root.val == val) {
+            return root;
+        }
+        return val < root.val ? searchBST(root.left,val): searchBST(root.right,val);
+    }
+
+    /**
+     * 判断是否是一个有效二叉树
+     * @param root
+     * @return
+     */
+    public boolean isValidBST(TreeNode root){
+        return isValidBST(root,Integer.MIN_VALUE,Integer.MAX_VALUE);
+    }
+
+    public boolean isValidBST(TreeNode root,int low,int height){
+        if (root == null) {
+            return true;
+        }
+        if (root.val <= low || root.val >= height) {
+            return false;
+        }
+        return isValidBST(root.left,low,root.val) && isValidBST(root.right,root.val,height);
+    }
+
+    /**
+     * 计算二叉搜索树中任意两节点的绝对值的最小值
+     * 中序遍历，相邻两个节点的差值最小
+     * @param root
+     * @return
+     */
+    int pre;
+    int ans;
+    public int getMinimumDifference(TreeNode root){
+        ans = Integer.MAX_VALUE;
+        pre = -1;
+        dfs(root);
+        return ans;
+    }
+
+    public void dfs(TreeNode root) {
+        if (root == null) return;
+        dfs(root.left);
+        if (pre != -1) {
+            ans = Math.min(ans, root.val - pre);
+        }
+        pre = root.val;
+        dfs(root.right);
+    }
+
+
+    /**
+     * 有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）
+     * 中序遍历
+     * @param root
+     * @return
+     */
+    List<Integer> answer = new ArrayList<>();
+    int base,count,maxCount;
+    public int[] findMode(TreeNode root){
+        findModeDfs(root);
+        int[] mode = new int[answer.size()];
+        for (int i = 0; i<answer.size(); i++) {
+            mode[i] = answer.get(i);
+        }
+        return mode;
+    }
+
+    public void findModeDfs(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        findModeDfs(root.left);
+        findModeUpdate(root.val);
+        findModeDfs(root.right);
+    }
+
+    public void findModeUpdate(int x) {
+        if (x == base) {
+            ++count;
+        } else {
+            count = 1;
+            base = x;
+        }
+        if (count == maxCount) {
+            answer.add(base);
+        }
+        if (count > maxCount) {
+            maxCount = count;
+            answer.clear();
+            answer.add(base);
+        }
+    }
+
+    /**
+     * 将二叉搜索树转换为累加树
+     * @param root
+     * @return
+     */
+    int sum = 0;
+    public TreeNode convertBST(TreeNode root){
+        if (root != null) {
+            convertBST(root.right);
+            sum += root.val;
+            root.val = sum;
+            convertBST(root.left);
+        }
+        return root;
+    }
+
+    /**
+     * 二叉树最近的公共祖先
+     * 递归实现
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    private TreeNode commonNode = null;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q){
+        dfs(root,p,q);
+        return commonNode;
+    }
+
+    public boolean dfs(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return false;
+        boolean lson = dfs(root.left,p,q);
+        boolean rson = dfs(root.right,p,q);
+        if ((lson && rson) ||((root.val == p.val || root.val == q.val) && (lson || rson))) {
+            commonNode = root;
+        }
+        return lson || rson || (root.val == p.val || root.val == q.val);
+    }
+
+    /**
+     * 二叉搜索树的最近公共祖先
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    public TreeNode lowestCommonAncestors(TreeNode root, TreeNode p, TreeNode q) {
+        TreeNode ancestor = root;
+        while (true) {
+            if (p.val < ancestor.val && q.val < ancestor.val) {
+                ancestor = ancestor.left;
+            } else if (p.val > ancestor.val && q.val > ancestor.val) {
+                ancestor = ancestor.right;
+            } else {
+                break;
+            }
+        }
+        return ancestor;
+    }
 }
