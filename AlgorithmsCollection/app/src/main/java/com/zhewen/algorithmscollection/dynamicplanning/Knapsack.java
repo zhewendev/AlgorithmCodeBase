@@ -1,8 +1,7 @@
-package com.zhewen.algorithmscollection.basicdata;
+package com.zhewen.algorithmscollection.dynamicplanning;
 
 /**
  * 经典背包问题
- * todo
  *试图将不同重量的数据项放到背包中，以使得背包最后达到指定的总重量。
  *
  * 假设想要让背包精确地承重20磅，并且有 5 个可以放入的数据项，它们的重量分别是 11 磅，8 磅，7 磅，6 磅，5 磅
